@@ -37,13 +37,14 @@ def login_request(request):
             return redirect('djangoapp:index')
         else:
             context['message'] = "Invalid username or password."
-            return render(request, 'djangoapp/user_login_bootstrap.html', context)
+            return render(request, 'djangoapp/index.html', context)
     else:
-        return render(request, 'djangoapp/user_login_bootstrap.html', context)
+        return render(request, 'djangoapp/indexp.html', context)
 
 
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
+    print("Log out the user `{}`".format(request.user.username))
     logout(request)
     return redirect('djangoapp:index')
 
