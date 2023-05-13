@@ -27,8 +27,8 @@ DEBUG = True
 
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ["localhost"]
-
+# ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost:8000","localhost","https://mitsumasawat-8000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/admin"]
 
 # Application definition
 

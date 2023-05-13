@@ -85,6 +85,13 @@ def get_dealerships(request):
     if request.method == "GET":
         return render(request, 'djangoapp/index.html', context)
 
+    # if request.method == "GET":
+    #     context = {}
+        # url = "https://au-syd.functions.appdomain.cloud/api/v1/web/a4851288-2067-4980-8b25-eac6863f38b4/dealership-package/get-dealership"
+        # dealerships = get_dealers_from_cf(url)
+        # context["dealership_list"] = dealerships
+        # return render(request, 'djangoapp/index.html', context)
+
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
