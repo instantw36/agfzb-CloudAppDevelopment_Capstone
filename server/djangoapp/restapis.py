@@ -73,7 +73,7 @@ def get_dealers_from_cf(url, **kwargs):
         json_result = get_request(url)
 
     # Call get_request with a URL parameter
-    json_result = get_request(url)
+    # json_result = get_request(url)
     if json_result:
         # Get the row list in JSON as dealers
         dealers = json_result#["body"]["rows"]
@@ -105,7 +105,7 @@ def get_dealer_reviews_from_cf(url, **kwargs):
         json_result = get_request(url, id=id)
     else:
         json_result = get_request(url)
-    print("== 96 =======================", json_result,sep='\n')
+    print("== 96 ====", json_result,sep='\n')
     if json_result:
         # reviews = json_result["body"]["data"]
         reviews = json_result ["data"]["docs"]
@@ -129,7 +129,7 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                 review_obj.car_year = dealer_review["car_year"]
             
             sentiment = analyze_review_sentiments(review_obj.review)
-            print(sentiment)
+            # print(sentiment)
             review_obj.sentiment = sentiment
             # review_obj.sentiment = analyze_review_sentiments(review_obj.review)
             results.append(review_obj)
@@ -144,9 +144,9 @@ def get_dealer_by_id_from_cf(url, id):
     json_result = get_request(url, id=id)
     print('json_result from line 54',json_result)
     # print(json_result[0]["address"])
-    print('json_result ====> ',type(json_result))
+    # print('json_result ====> ',type(json_result))
     if json_result:
-        print("@@@@@@@@@@",json_result[0]["address"])
+        # print("@@@@@@@@@@",json_result[0]["address"])
         dealers = json_result#["body"]
         # print(dealers)
         dealer_doc = dealers[0]
@@ -160,7 +160,7 @@ def get_dealer_by_id_from_cf(url, id):
                                 full_name = dealer_doc["full_name"],                    
                                 st = dealer_doc["st"],
                                 zip = dealer_doc["zip"])
-    print("<<<<dealer_obj>>>>>",dealer_obj)
+    # print("<<<<dealer_obj>>>>>",dealer_obj)
     return dealer_obj
 
 
