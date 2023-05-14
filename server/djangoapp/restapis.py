@@ -1,8 +1,12 @@
 import requests
 import json
 # import related models here
-from .models import CarDealer
+from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_watson.natural_language_understanding_v1 import Features,SentimentOptions
+import time
 
 
 # Create a `get_request` to make HTTP GET requests
@@ -10,8 +14,8 @@ from requests.auth import HTTPBasicAuth
 #                                     auth=HTTPBasicAuth('apikey', api_key))
 def get_request(url, **kwargs):
     api_key = kwargs.get("api_key")
-    print(kwargs)
-    print("GET from {} ".format(url))
+    print("||||||",kwargs,api_key)
+    print("==== GET from {} ".format(url))
     try:
         if api_key:
         
@@ -64,7 +68,7 @@ def get_dealers_from_cf(url, **kwargs):
     results = []
     state = kwargs.get("state")
     if state:
-        json_result = get_request(url, state=state)
+        json_result = get_request(url, st=state)
     else:
         json_result = get_request(url)
 
@@ -72,7 +76,7 @@ def get_dealers_from_cf(url, **kwargs):
     json_result = get_request(url)
     if json_result:
         # Get the row list in JSON as dealers
-        dealers = json_result#["rows"]
+        dealers = json_result#["body"]["rows"]
         # For each dealer object
         for dealer in dealers:
             # Get its content in `doc` object
@@ -92,19 +96,22 @@ def get_dealers_from_cf(url, **kwargs):
     return results
 
 
-
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
 def get_dealer_reviews_from_cf(url, **kwargs):
     results = []
     id = kwargs.get("id")
+    print("== id ========= : ", id)
     if id:
         json_result = get_request(url, id=id)
     else:
         json_result = get_request(url)
-    
+    print("== 96 =======================", json_result,sep='\n')
     if json_result:
+        # reviews = json_result["body"]["data"]
         reviews = json_result ["data"]["docs"]
         for dealer_review in reviews:
+            dealer_review = reviews[0]
+
             review_obj = DealerReview(
                                     dealership = dealer_review["dealership"],
                                     name = dealer_review["name"],
@@ -123,20 +130,25 @@ def get_dealer_reviews_from_cf(url, **kwargs):
             
             sentiment = analyze_review_sentiments(review_obj.review)
             print(sentiment)
-            # review_obj.sentiment = sentiment
-            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
+            review_obj.sentiment = sentiment
+            # review_obj.sentiment = analyze_review_sentiments(review_obj.review)
             results.append(review_obj)
 
     return results
+
+    
 
 def get_dealer_by_id_from_cf(url, id):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
     json_result = get_request(url, id=id)
     print('json_result from line 54',json_result)
-
+    # print(json_result[0]["address"])
+    print('json_result ====> ',type(json_result))
     if json_result:
-        dealers = json_result["body"]
+        print("@@@@@@@@@@",json_result[0]["address"])
+        dealers = json_result#["body"]
+        # print(dealers)
         dealer_doc = dealers[0]
         dealer_obj = CarDealer(
                                 address = dealer_doc["address"], 
@@ -148,8 +160,10 @@ def get_dealer_by_id_from_cf(url, id):
                                 full_name = dealer_doc["full_name"],                    
                                 st = dealer_doc["st"],
                                 zip = dealer_doc["zip"])
+    print("<<<<dealer_obj>>>>>",dealer_obj)
     return dealer_obj
-    
+
+
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 # def analyze_review_sentiments(text):

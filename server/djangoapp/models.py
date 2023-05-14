@@ -14,11 +14,10 @@ import datetime
 class CarMake(models.Model):
     name = models.CharField(null=False, max_length=30, default='')
     description = models.CharField(max_length=200)
-    other = models.CharField(max_length=200)
+    # other = models.CharField(max_length=200)
 
     def __str__(self):
-        return "Name: " + self.name + "," + \
-               "Description: " + self.description
+        return "Name: " + self.name# + "," + "Description: " + self.description
 
 def current_year():
     return datetime.date.today().year
@@ -36,7 +35,7 @@ def year_choices():
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
 class CarModel(models.Model):
-    make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    make = models.ForeignKey(CarMake, null=False, on_delete=models.CASCADE)  
     name = models.CharField(null=False, max_length=100, default='')
     id = models.IntegerField(default=1,primary_key=True)
     
@@ -93,7 +92,9 @@ class CarDealer:
 # # <HINT> Create a plain Python class `DealerReview` to hold review data
 class DealerReview:
 
-    def __init__(self, dealership, name, purchase, review):
+    # def __init__(self, dealership, name, purchase, review):
+    def __init__(self, dealership, name, purchase, review, purchase_date, car_make, car_model, car_year, sentiment, id):
+
         # Required attributes
         self.dealership = dealership
         self.name = name

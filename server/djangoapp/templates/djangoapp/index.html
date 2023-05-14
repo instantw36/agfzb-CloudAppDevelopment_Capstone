@@ -24,13 +24,13 @@
                 <a class="navbar-brand" href="#">Dealership Review</a>
             </div>
             <ul class="nav navbar-nav navbar-right">
-                <!-- <li>
+                <li>
                     <a class="btn btn-link" href="{% url 'djangoapp:index' %}">Home</a>
                     <a class="btn btn-link" href="{% url 'djangoapp:about' %}">About Us</a>
                     <a class="btn btn-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
-                </li> -->
+                <!-- </li> -->
                 {% if user.is_authenticated %}
-                <li>
+                <!-- <li> -->
                     <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
                     <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
                 </li>
