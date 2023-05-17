@@ -64,6 +64,9 @@ def registration_request(request):
         user_exist = False
         try:
             User.objects.get(username=username)
+            user.is_superuser = True
+            user.is_staff=True
+            user.save() 
             user_exist = True
         except:
             logger.error("New user")
@@ -87,6 +90,7 @@ def get_dealerships(request):
         dealerships = get_dealers_from_cf(url)
         context = {}
         context["dealership_list"] = dealerships
+        # print("views.py get_dealerships------------",context)
         return render(request, 'djangoapp/index.html', context)
         # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         # # Return a list of dealer short name
@@ -96,15 +100,16 @@ def get_dealerships(request):
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request, id):
     if request.method == 'GET':
+        context = {}
         dealer_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/a4851288-2067-4980-8b25-eac6863f38b4/dealership-package/get-dealership"
         dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
-        context = {}
         context['dealer'] = dealer
-        # context = {"reviews":  reviews, "id": id}
-
+        print("vvvvvvvv views.py get_dealer_details dealer >>> ",dealer)
+        print("====================")
         review_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/a4851288-2067-4980-8b25-eac6863f38b4/dealership-package/get-review"
         reviews = get_dealer_reviews_from_cf(review_url, id=id)
-        print(reviews)
+        print("vvvvvvvvvv  views.py get_dealer_details reviews >>>  ",reviews)
+        print(" --------------------")
         context["reviews"] = reviews
 
         return render(request, 'djangoapp/dealer_details.html', context)
@@ -123,10 +128,11 @@ def add_review(request, id):
     dealer_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/a4851288-2067-4980-8b25-eac6863f38b4/dealership-package/get-review"
     dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
     context["dealer"] = dealer
+    print("vvvvvvviews add_review vvvvvvvvvvvvvvvvvv", dealer)
     if request.method == 'GET':
         # Get cars for the dealer
         cars = CarModel.objects.filter(id=id)
-        print(cars)
+        print("add_review::::: ",cars)
         context["cars"] = cars
         return render(request, 'djangoapp/add_review.html', context)
 
