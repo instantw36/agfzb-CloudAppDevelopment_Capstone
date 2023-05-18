@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarModel, CarMake, CarDealer, DealerReview, ReviewPost
 # from .restapis import related methods
 from .restapis import get_request, get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf, post_request
-from .restapis import get_request, get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf, post_request
+
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -91,26 +91,22 @@ def get_dealerships(request):
         dealerships = get_dealers_from_cf(url)
         context = {}
         context["dealership_list"] = dealerships
-        # print("views.py get_dealerships------------",context)
         return render(request, 'djangoapp/index.html', context)
-        # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         # # Return a list of dealer short name
         # return HttpResponse(dealer_names)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request, id):
-    if request.method == 'GET':
+    if request.method == "GET":
         context = {}
         dealer_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/a4851288-2067-4980-8b25-eac6863f38b4/dealership-package/get-dealership"
         dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
-        context['dealer'] = dealer
-        print("vvvvvvvv views.py get_dealer_details dealer >>> ",dealer)
-        print("====================")
+        context["dealer"] = dealer
+
         review_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/a4851288-2067-4980-8b25-eac6863f38b4/dealership-package/get-review"
         reviews = get_dealer_reviews_from_cf(review_url, id=id)
-        print("vvvvvvvvvv  views.py get_dealer_details reviews >>>  ",reviews)
-        print(" --------------------")
+
         context["reviews"] = reviews
 
         return render(request, 'djangoapp/dealer_details.html', context)
@@ -126,14 +122,12 @@ def add_review(request, id):
 #     return ""
     context = {}
 
-    dealer_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/a4851288-2067-4980-8b25-eac6863f38b4/dealership-package/get-review"
+    dealer_url = "https://au-syd.functions.appdomain.cloud/api/v1/web/a4851288-2067-4980-8b25-eac6863f38b4/dealership-package/get-dealership"
     dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
     context["dealer"] = dealer
-    print("vvvvvvviews add_review vvvvvvvvvvvvvvvvvv", dealer)
     if request.method == 'GET':
         # Get cars for the dealer
-        cars = CarModel.objects.filter(id=id)
-        print("add_review::::: ",cars)
+        cars = CarModel.objects.all()
         context["cars"] = cars
         return render(request, 'djangoapp/add_review.html', context)
 
@@ -154,7 +148,7 @@ def add_review(request, id):
                 if request.POST["purchasecheck"] == 'on':
                     payload["purchase"] = True
             payload["purchase_date"] = request.POST["purchasedate"]
-            payload["car_make"] = car.make.name
+            payload["car_make"] = car.name
             payload["car_model"] = car.name
             payload["car_year"] = int(car.year.strftime("%Y"))
             new_payload = {}

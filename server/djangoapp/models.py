@@ -4,6 +4,7 @@ import uuid
 import json
 import datetime
 
+
 # Create your models here.
 
 # <HINT> Create a Car Make model `class CarMake(models.Model)`:
@@ -35,33 +36,31 @@ def year_choices():
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
 class CarModel(models.Model):
-    make = models.ForeignKey(CarMake, null=False, on_delete=models.CASCADE)  
-    name = models.CharField(null=False, max_length=100, default='')
     id = models.IntegerField(default=1,primary_key=True)
-    
-
+    name = models.CharField(null=False, max_length=100, default='Car')
+   
     SEDAN = 'Sedan'
-    SUV = 'Suv'
+    SUV = 'SUV'
     WAGON = 'Wagon'
-    
+    MINIVAN = 'Minivan'
     CAR_TYPES = [
-                (SEDAN, 'Sedan'),
-                (SUV, 'Suv'),
-                (WAGON, 'Wagon')
-                ]
+        (SEDAN, 'Sedan'),
+        (SUV, 'SUV'),
+        (WAGON, 'Wagon'),
+        (MINIVAN, 'Minivan')
+    ]
+
     type = models.CharField(
-                            null=False,
-                            max_length=20,
-                            choices=CAR_TYPES,
-                            default=SEDAN
-                            )
-    # year = models.IntegerField(_('year'), choices=year_choices, default=current_year)                            
+        null=False,
+        max_length=50,
+        choices=CAR_TYPES,
+        default=SEDAN
+    )
+    make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     year = models.DateField(default=now)
 
     def __str__(self):
-        return "Name: " + self.name# + "," + \
-            #    "Type: " + self.type + "," + \
-            #    "Year: " + self.year
+        return "Name: " + self.name
 
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
 class CarDealer:
@@ -91,42 +90,33 @@ class CarDealer:
 
 # # <HINT> Create a plain Python class `DealerReview` to hold review data
 class DealerReview:
-
-    def __init__(self, dealership, name, purchase, review):
-    # def __init__(self, dealership, name, purchase, review, purchase_date, car_make, car_model, car_year, sentiment, id):
-
-        # Required attributes
+    def __init__(self, dealership, name, purchase, review,):
+        self.make = ""
+        self.car_model = ""
+        self.car_year = ""
         self.dealership = dealership
-        self.name = name
-        self.purchase = purchase
-        self.review = review
-        # Optional attributes
+        self.id = ""  # The id of the review
+        self.name = name  # Name of the reviewer
+        self.purchase = purchase  # Did the reviewer purchase the car? bool
         self.purchase_date = ""
-        self.purchase_make = ""
-        self.purchase_model = ""
-        self.purchase_year = ""
-        self.sentiment = ""
-        self.id = ""
+        self.review = review  # The actual review text
+        self.sentiment = ""  # Watson NLU sentiment analysis of review
 
     def __str__(self):
-        return "Review: " + self.review
-
-    def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-                            sort_keys=True, indent=4)
+        return "Reviewer: " + self.name + " Review: " + self.review
 
 # # <HINT> Create a plain Python class `ReviewPost` to post review data
 class ReviewPost:
 
-    def __init__(self, dealership, name, purchase, review):
+    def __init__(self, dealership, name, purchase, review, purchase_date, car_make, car_model, car_year):
         self.dealership = dealership
         self.name = name
         self.purchase = purchase
         self.review = review
-        self.purchase_date = ""
-        self.car_make = ""
-        self.car_model = ""
-        self.car_year = ""
+        self.purchase_date = purchase_date
+        self.car_make = car_make
+        self.car_model = car_model
+        self.car_year = car_year
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__,
