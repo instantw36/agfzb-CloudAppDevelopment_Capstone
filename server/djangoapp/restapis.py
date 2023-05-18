@@ -98,15 +98,18 @@ def get_dealer_reviews_from_cf(url, **kwargs):
     if json_result:
         # reviews = json_result["body"]["data"]
         reviews = json_result["data"]["docs"]
+        print("reviews...............",reviews)
         for dealer_review in reviews:
             dealer_review = reviews[0]
-
+            print("dealer_review= > > > > > > ",dealer_review)
             review_obj = DealerReview(
                                     dealership = dealer_review["dealership"],
                                     name = dealer_review["name"],
                                     purchase = dealer_review["purchase"],
                                     review = dealer_review["review"])
+
             if "id" in dealer_review:
+                print(".................id.....", dealer_review["id"])
                 review_obj.id = dealer_review["id"]
             if "purchase_date" in dealer_review:
                 review_obj.purchase_date = dealer_review["purchase_date"]
@@ -118,45 +121,12 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                 review_obj.car_year = dealer_review["car_year"]
             
             sentiment = analyze_review_sentiments(review_obj.review)
-            # print(sentiment)
-            review_obj.sentiment = sentiment
-            # review_obj.sentiment = analyze_review_sentiments(review_obj.review)
+            print(sentiment)
+            # review_obj.sentiment = sentiment
+            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
             results.append(review_obj)
     print("restapi.py get_dealer_reviews_from_cf result_________",results)
     return results
-# def get_dealer_reviews_from_cf(url, **kwargs):
-#     results = []
-#     id = kwargs.get("id")
-#     if id:
-#         json_result = get_request(url, id=id)
-#     else:
-#         json_result = get_request(url)
-#     print(json_result,"96")
-#     if json_result:
-#         reviews = json_result["data"]["docs"]
-#         for dealer_review in reviews:
-#             review_obj = DealerReview(dealership=dealer_review["dealership"],
-#                                    name=dealer_review["name"],
-#                                    purchase=dealer_review["purchase"],
-#                                    review=dealer_review["review"])
-#             if "id" in dealer_review:
-#                 review_obj.id = dealer_review["id"]
-#             if "purchase_date" in dealer_review:
-#                 review_obj.purchase_date = dealer_review["purchase_date"]
-#             if "car_make" in dealer_review:
-#                 review_obj.car_make = dealer_review["car_make"]
-#             if "car_model" in dealer_review:
-#                 review_obj.car_model = dealer_review["car_model"]
-#             if "car_year" in dealer_review:
-#                 review_obj.car_year = dealer_review["car_year"]
-            
-#             sentiment = analyze_review_sentiments(review_obj.review)
-#             print(sentiment)
-#             review_obj.sentiment = sentiment
-#             results.append(review_obj)
-
-#     return results
-
     
 
 def get_dealer_by_id_from_cf(url, id):
@@ -184,36 +154,6 @@ def get_dealer_by_id_from_cf(url, id):
     print("rrrrrrrrrrrestapi.py dealer_obj::::",dealer_obj)
     return dealer_obj
 
-# def get_dealer_by_id_from_cf(url, id):
-#     results = []
-
-#     # Call get_request with a URL parameter
-#     json_result = get_request(url, id=id)
-
-#     if json_result:
-#         # Get the row list in JSON as dealers
-#         dealers = json_result
-#         print(dealers,"63")
-
-#         # For each dealer object
-#         for dealer in dealers:
-#             # Get its content in `doc` object
-#             dealer_doc = dealer
-#             if dealer_doc["id"] == id:
-#                 # Create a CarDealer object with values in `doc` object
-#                 dealer_obj = CarDealer(address=dealer_doc["address"], 
-#                                        city=dealer_doc["city"], 
-#                                        full_name=dealer_doc["full_name"],
-#                                        id=dealer_doc["id"], 
-#                                        lat=dealer_doc["lat"], 
-#                                        long=dealer_doc["long"],
-#                                        short_name=dealer_doc["short_name"],
-#                                        st=dealer_doc["st"], 
-#                                        zip=dealer_doc["zip"])                    
-#                 results.append(dealer_obj)
-#     print("results>>>>>>>",results[1])
-#     return results[0]
-
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 # def analyze_review_sentiments(text):
@@ -225,9 +165,13 @@ def analyze_review_sentiments(dealerreview):
     authenticator = IAMAuthenticator(api_key) 
     natural_language_understanding = NaturalLanguageUnderstandingV1(version = '2021-08-01', authenticator = authenticator) 
     natural_language_understanding.set_service_url(url) 
-    response = natural_language_understanding.analyze(text = dealerreview, 
-                                                        features = Features(sentiment = SentimentOptions(targets = [dealerreview]))
-                                                        ).get_result() 
+    response = natural_language_understanding.analyze(
+        text = dealerreview, 
+        language = 'en',
+        features = Features(
+            sentiment = SentimentOptions(
+            targets = [dealerreview]))
+                            ).get_result() 
     label = json.dumps(response, indent = 2) 
 
     label = response['sentiment']['document']['label'] 

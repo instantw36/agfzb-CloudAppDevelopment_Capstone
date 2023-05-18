@@ -48,6 +48,7 @@
     
     <!-- Add reviews as cards -->
     <h1>Reviews for <b>{{dealer.full_name}}</b></h1>
+    {% if reviews %}
     <div class="container">
         <div class="card-columns">
             {% for review in reviews %}
@@ -76,8 +77,14 @@
             </div>
         </div>
     </div>
-    <a class="btn btn-primary" href="{% url 'djangoapp:add_review' dealer.id %}"><b>Write a car review</b></a>
-
+    {% else %}
+    <div class="container text-center"><br><br><br>
+        <h3>No reviews are available.</h3>
+    </div>
+    {% endif %}
+    <div class="container text-center"><br><br>
+    <a class="btn btn-primary text-center" href="{% url 'djangoapp:add_review' dealer.id %}"><b>Write a car review</b></a>
+    </div>
 
     
     <footer class="fixed-bottom">
