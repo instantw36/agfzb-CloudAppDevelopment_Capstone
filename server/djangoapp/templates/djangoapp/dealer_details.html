@@ -84,7 +84,10 @@
     </div>
     {% endif %}
     <div class="container text-center"><br><br>
-    <a class="btn btn-primary text-center" href="{% url 'djangoapp:add_review' dealer.id %}"><b>Write a car review</b></a>
+        <a class="btn btn-primary text-center" href="{% url 'djangoapp:index' %}">Back to Home</a><br>
+    {% if user.is_authenticated %}
+    <br><a class="btn btn-primary text-center" href="{% url 'djangoapp:add_review' dealer.id %}"><b>Write a car review</b></a>
+    {% endif %}
     </div>
 
     

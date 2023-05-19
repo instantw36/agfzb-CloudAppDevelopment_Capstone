@@ -13,7 +13,7 @@ import time
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
 #                                     auth=HTTPBasicAuth('apikey', api_key))
 def get_request(url, **kwargs):
-    api_key = kwargs.get("api_key",None)
+    api_key = kwargs.get("api_key")
     print("||||||", kwargs,api_key)
     print("==== GET from {} ".format(url))
     try:
@@ -130,10 +130,13 @@ def get_dealer_reviews_from_cf(url, **kwargs):
     else:
         json_result = get_request(url)
     if json_result:
-        # reviews = json_result["body"]["data"]["docs"]
         reviews = json_result["data"]["docs"]
+        # ct,n = len(reviews), 1
         for review in reviews:
-            review = reviews[0]
+            
+            # print(n,'/',ct,"______________get_dealer_reviews_from_cf;;;; ",review)
+            # n +=1
+            # review = reviews[0]
             review_obj = DealerReview(
                                     dealership = review["dealership"],
                                     name = review["name"],
